@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-    image_dir := "img"
+    image_dir := "data/img"
 
     images, err := ioutil.ReadDir(image_dir)
 
     if err != nil {
-        fmt.Fprintf(os.Stderr, "ERROR %v\n", err)
+        fmt.Println("Please download the image data set by running get_data.sh")
         os.Exit(1)
     }
 
