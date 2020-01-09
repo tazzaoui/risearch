@@ -14,5 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Default image directory
-img/
+# Default data directory 
+data/
+!data/get_data.sh
