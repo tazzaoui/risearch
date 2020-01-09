@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 
 	"gocv.io/x/gocv"
 	"gocv.io/x/gocv/contrib"
@@ -19,16 +20,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	sift := contrib.NewSIFT()
+	defer sift.Close()
+
 	for _, img := range images {
-		fmt.Println(img.Name())
+		img_path := path.Join(image_dir, img.Name())
 
-		img := gocv.IMRead(img.Name(), gocv.IMReadGrayScale)
-		defer img.Close()
+		mat := gocv.IMRead(img_path, gocv.IMReadGrayScale)
+		defer mat.Close()
 
-		sift := contrib.NewSIFT()
-		defer sift.Close()
-
-		key_points := sift.Detect(img)
-		fmt.Println(key_points)
+		if !mat.Empty() {
+			key_points := sift.Detect(mat)
+			fmt.Println(key_points)
+		}
 	}
 }
