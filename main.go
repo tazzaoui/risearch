@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 	image_dir := "data/img"
+	kp_dir := "data/kp"
 
 	images, err := ioutil.ReadDir(image_dir)
 
@@ -25,13 +27,17 @@ func main() {
 
 	for _, img := range images {
 		img_path := path.Join(image_dir, img.Name())
+		kp_path := path.Join(kp_dir, img.Name()+".json")
 
 		mat := gocv.IMRead(img_path, gocv.IMReadGrayScale)
 		defer mat.Close()
 
 		if !mat.Empty() {
-			key_points := sift.Detect(mat)
-			fmt.Println(key_points)
+			key_pts := sift.Detect(mat)
+			encoded_kp, err := json.Marshal(key_pts)
+			if err == nil {
+				ioutil.WriteFile(kp_path, encoded_kp, 0644)
+			}
 		}
 	}
 }
