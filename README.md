@@ -1,13 +1,11 @@
 # risearch
 
-writing reverse image search to learn go
-
-# deps
-
-* [gocv](https://gocv.io/)
-
+Writing reverse image search to learn go
 
 ![SIFT Keypoints](example.png)
+
+## Deps
+* [gocv](https://gocv.io/)
 
 ## Basic idea:
 * Construct a matrix of SIFT descriptors of each reference image
