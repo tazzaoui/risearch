@@ -39,7 +39,7 @@ func main() {
 			defer mat.Close()
 
 			if !mat.Empty() {
-				key_pts := sift.Detect(mat)
+				key_pts, _ := sift.DetectAndCompute(mat, gocv.NewMat())
 				encoded_kp, err := json.Marshal(key_pts)
 				if err == nil {
 					ioutil.WriteFile(kp_path, encoded_kp, 0644)
