@@ -11,6 +11,8 @@ import (
 	"gocv.io/x/gocv/contrib"
 )
 
+const MAX_GO_ROUTINES = 100
+
 func main() {
 	image_dir := "data/img"
 	kp_dir := "data/kp"
@@ -25,19 +27,25 @@ func main() {
 	sift := contrib.NewSIFT()
 	defer sift.Close()
 
+	c := make(chan int, MAX_GO_ROUTINES)
+
 	for _, img := range images {
 		img_path := path.Join(image_dir, img.Name())
 		kp_path := path.Join(kp_dir, img.Name()+".json")
 
-		mat := gocv.IMRead(img_path, gocv.IMReadGrayScale)
-		defer mat.Close()
+		c <- 1
+		go func() {
+			mat := gocv.IMRead(img_path, gocv.IMReadGrayScale)
+			defer mat.Close()
 
-		if !mat.Empty() {
-			key_pts := sift.Detect(mat)
-			encoded_kp, err := json.Marshal(key_pts)
-			if err == nil {
-				ioutil.WriteFile(kp_path, encoded_kp, 0644)
+			if !mat.Empty() {
+				key_pts := sift.Detect(mat)
+				encoded_kp, err := json.Marshal(key_pts)
+				if err == nil {
+					ioutil.WriteFile(kp_path, encoded_kp, 0644)
+				}
 			}
-		}
+			<-c
+		}()
 	}
 }
