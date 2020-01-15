@@ -27,7 +27,7 @@ func read_descs(max int) [][][]float64 {
 		kp_path := path.Join(kp_dir, f.Name())
 		var tmp [][]float64
 		file, _ := ioutil.ReadFile(kp_path)
-		_ = json.Unmarshal([]byte(file), &tmp)
+		_ = json.Unmarshal(file, &tmp)
 		descs = append(descs, tmp)
 		i++
 	}
