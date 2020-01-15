@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+
+	"github.com/tazzaoui/risearch/lib"
 )
 
 func read_descs(max int) [][][]float64 {
@@ -35,13 +37,14 @@ func read_descs(max int) [][][]float64 {
 }
 
 func main() {
-	/*
-		if len(os.Args) <= 1 {
-			fmt.Println("Please provide an input image.")
-			return
-		}
-	*/
+	if len(os.Args) <= 1 {
+		fmt.Println("Please provide an input image.")
+		return
+	}
 
-	descs := read_descs(5)
-	fmt.Println(descs)
+	desc_db := read_descs(100)
+	fmt.Println(desc_db)
+
+	img_desc := lib.GetDescriptors(os.Args[1])
+	fmt.Println(img_desc)
 }
