@@ -27,7 +27,6 @@ func main() {
 	sift := contrib.NewSIFT()
 	defer sift.Close()
 
-	// Limit
 	sem := make(chan int, MAX_GO_ROUTINES)
 
 	for _, img := range images {
@@ -41,7 +40,9 @@ func main() {
 
 			// Extract descriptors
 			if !mat.Empty() {
-				key_pts, desc := sift.DetectAndCompute(mat, gocv.NewMat())
+				mask := gocv.NewMat()
+				key_pts, desc := sift.DetectAndCompute(mat, mask)
+
 				var descriptors [][]float64
 				for i, _ := range key_pts {
 					var tmp []float64
@@ -54,6 +55,9 @@ func main() {
 				// Dump descriptors to disk
 				bytes, _ := json.Marshal(descriptors)
 				ioutil.WriteFile(kp_path, bytes, 0644)
+
+				mat.Close()
+				desc.Close()
 			}
 			<-sem
 		}()
