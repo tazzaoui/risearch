@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,6 +15,7 @@ const MAX_GO_ROUTINES = 100
 
 func main() {
 	image_dir := "data/img"
+	kp_dir := "data/kp"
 
 	images, err := ioutil.ReadDir(image_dir)
 
@@ -25,16 +27,19 @@ func main() {
 	sift := contrib.NewSIFT()
 	defer sift.Close()
 
-	c := make(chan int, MAX_GO_ROUTINES)
+	// Limit
+	sem := make(chan int, MAX_GO_ROUTINES)
 
 	for _, img := range images {
 		img_path := path.Join(image_dir, img.Name())
+		kp_path := path.Join(kp_dir, img.Name()+".json")
 
-		c <- 1
+		sem <- 1
 		go func() {
 			mat := gocv.IMRead(img_path, gocv.IMReadGrayScale)
 			defer mat.Close()
 
+			// Extract descriptors
 			if !mat.Empty() {
 				key_pts, desc := sift.DetectAndCompute(mat, gocv.NewMat())
 				var descriptors [][]float64
@@ -45,9 +50,12 @@ func main() {
 					}
 					descriptors = append(descriptors, tmp)
 				}
-				fmt.Println(descriptors)
+
+				// Dump descriptors to disk
+				bytes, _ := json.Marshal(descriptors)
+				ioutil.WriteFile(kp_path, bytes, 0644)
 			}
-			<-c
+			<-sem
 		}()
 	}
 }
