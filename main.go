@@ -1,16 +1,15 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/tazzaoui/risearch/lib"
+	"gocv.io/x/gocv"
 	"io/ioutil"
 	"os"
 	"path"
-
-	"github.com/tazzaoui/risearch/lib"
 )
 
-func read_descs(max int) [][][]float64 {
+func read_descs(max int) (descs []gocv.Mat) {
 	kp_dir := "data/kp"
 	files, err := ioutil.ReadDir(kp_dir)
 
@@ -19,18 +18,15 @@ func read_descs(max int) [][][]float64 {
 		os.Exit(1)
 	}
 
-	var descs [][][]float64
-
 	i := 0
 	for _, f := range files {
 		if max > 0 && i >= max {
 			break
 		}
 		kp_path := path.Join(kp_dir, f.Name())
-		var tmp [][]float64
-		file, _ := ioutil.ReadFile(kp_path)
-		_ = json.Unmarshal(file, &tmp)
-		descs = append(descs, tmp)
+		desc := gocv.IMRead(kp_path, gocv.IMReadUnchanged)
+
+		descs = append(descs, desc)
 		i++
 	}
 	return descs
@@ -42,9 +38,15 @@ func main() {
 		return
 	}
 
-	desc_db := read_descs(100)
-	fmt.Println(desc_db)
-
 	img_desc := lib.GetDescriptors(os.Args[1])
-	fmt.Println(img_desc)
+
+	bf := gocv.NewBFMatcherWithParams(gocv.NormL1, false)
+	defer bf.Close()
+
+	desc_db := read_descs(100)
+
+	for _, d := range desc_db {
+		matches := bf.KnnMatch(d, img_desc, 4)
+		fmt.Println(matches)
+	}
 }
