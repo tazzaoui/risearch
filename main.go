@@ -9,7 +9,19 @@ import (
 	"path"
 )
 
-func read_descs(max int) (descs []gocv.Mat) {
+type match struct {
+	img     string          // Path to image being matched against
+	matches [][]gocv.DMatch // Matches ranked in increasing order by distance
+}
+
+const MAX_IMAGES = 100
+
+func main() {
+	if len(os.Args) <= 1 {
+		fmt.Println("Please provide an input image.")
+		return
+	}
+
 	kp_dir := "data/kp"
 	files, err := ioutil.ReadDir(kp_dir)
 
@@ -18,35 +30,26 @@ func read_descs(max int) (descs []gocv.Mat) {
 		os.Exit(1)
 	}
 
-	i := 0
-	for _, f := range files {
-		if max > 0 && i >= max {
-			break
-		}
-		kp_path := path.Join(kp_dir, f.Name())
-		desc := gocv.IMRead(kp_path, gocv.IMReadUnchanged)
-
-		descs = append(descs, desc)
-		i++
-	}
-	return descs
-}
-
-func main() {
-	if len(os.Args) <= 1 {
-		fmt.Println("Please provide an input image.")
-		return
-	}
-
 	img_desc := lib.GetDescriptors(os.Args[1])
 
 	bf := gocv.NewBFMatcherWithParams(gocv.NormL1, false)
 	defer bf.Close()
 
-	desc_db := read_descs(100)
+	var matches []match
 
-	for _, d := range desc_db {
-		matches := bf.KnnMatch(d, img_desc, 4)
-		fmt.Println(matches)
+	i := 0
+	for _, f := range files {
+		if MAX_IMAGES > 0 && i >= MAX_IMAGES {
+			break
+		}
+
+		kp_path := path.Join(kp_dir, f.Name())
+		desc := gocv.IMRead(kp_path, gocv.IMReadUnchanged)
+
+		desc_matches := bf.KnnMatch(desc, img_desc, 4)
+		matches = append(matches, match{kp_path, desc_matches})
+		i++
 	}
+
+	fmt.Println(matches)
 }
