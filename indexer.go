@@ -1,13 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 
 	"github.com/tazzaoui/risearch/lib"
+	"gocv.io/x/gocv"
 )
 
 const MAX_GO_ROUTINES = 100
@@ -27,17 +27,18 @@ func main() {
 
 	for _, img := range images {
 		img_path := path.Join(image_dir, img.Name())
-		kp_path := path.Join(kp_dir, img.Name()+".json")
+		desc_path := path.Join(kp_dir, img.Name()+".png")
 
 		sem <- 1
 		go func() {
 			desc := lib.GetDescriptors(img_path)
 
 			// Dump descriptors to disk
-			bytes, _ := json.Marshal(desc)
-			ioutil.WriteFile(kp_path, bytes, 0644)
+			gocv.IMWrite(desc_path, desc)
+			desc.Close()
 
+			<-sem
 		}()
-		<-sem
+
 	}
 }
