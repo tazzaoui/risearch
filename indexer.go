@@ -35,7 +35,7 @@ func main() {
 		}
 
 		img_path := path.Join(image_dir, img.Name())
-		desc_path := path.Join(kp_dir, img.Name()+".png")
+		desc_path := path.Join(kp_dir, img.Name()+".tiff")
 
 		sem <- 1
 		go func() {
