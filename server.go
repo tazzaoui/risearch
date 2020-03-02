@@ -10,7 +10,8 @@ import (
 )
 
 type data struct {
-	Matches []lib.Match
+	Query   string      // Path of the query image
+	Matches []lib.Match // Matched images
 }
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("[+] Querying Image: " + handler.Filename + "...")
 
-	// Copy the query image data/target.ext
+	// Copy the query image to data/target.ext
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
@@ -39,7 +40,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	matches := lib.GetMatches(target_path)
 	fmt.Printf("[+] Matches: %d Closest Match: %.2f\n", len(matches), matches[0].AvgDist)
 
-	err = template.ExecuteTemplate(w, "results.html", data{matches})
+	err = template.ExecuteTemplate(w, "results.html", data{target_path, matches})
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -52,8 +53,8 @@ func main() {
 	http.HandleFunc("/search", UploadFile)
 
 	// Serve static image files (for displaying results)
-	img_fs := http.FileServer(http.Dir("data/img"))
-	http.Handle("/data/img/", http.StripPrefix("/data/img/", img_fs))
+	img_fs := http.FileServer(http.Dir("data"))
+	http.Handle("/data/", http.StripPrefix("/data/", img_fs))
 
 	fmt.Println("[+] Listening on port 8080...")
 	http.ListenAndServe(":8080", nil)
