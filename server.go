@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/tazzaoui/risearch/lib"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -21,14 +22,18 @@ func upload_file(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(handler.Filename)
 
+	// Copy the query image data/target.ext
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		target_ext := filepath.Ext(handler.Filename)
-		ioutil.WriteFile("data/target"+target_ext, bytes, 0777)
+		return
 	}
 
+	target_path := "data/target" + filepath.Ext(handler.Filename)
+	ioutil.WriteFile(target_path, bytes, 0777)
+
+	matches := lib.GetMatches(target_path)
+	fmt.Println(matches)
 }
 
 func main() {
