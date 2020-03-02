@@ -1,11 +1,54 @@
 <html>
 <head>
-       <title>risearch</title>
+    <style>
+        div.gallery {
+          margin: 5px;
+          border: 1px solid #ccc;
+          float: left;
+          width: 300;
+          height: 300;
+        }
+
+        div.gallery:hover {
+          border: 1px solid #777;
+        }
+
+        div.gallery img {
+          width: 600px;
+          height: 400px;
+        }
+
+        div.desc {
+          padding: 15px;
+          text-align: center;
+        }
+
+        img {
+          max-width: 300px;
+          max-height: 200px;
+        }
+        .center {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 50%;
+        }
+    </style>
+    <title>risearch</title>
 </head>
 <body>
-    <h1>Results</h1>
+    <h1>Risearch</h1>
+    <h2>Query: </h2>
+    <img src="{{.Query}}" alt="Query" class="center">
+    <br><br>
+    <h2>Results</h2>
     {{range .Matches}}
-    <img src="{{.Img}}" width=640 height=425>
+    <div class="gallery">
+        <a target="_blank" href="{{.Img}}">
+            <img src="{{.Img}}">
+        </a>
+        <div class="desc">{{.Img}} <br> Avg Distance: {{.AvgDist}}</div>
+    </div>
     {{end}}
 </body>
 </html>
