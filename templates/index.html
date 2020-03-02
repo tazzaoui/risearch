@@ -1,0 +1,13 @@
+<html>
+<head>
+       <title>risearch</title>
+</head>
+<body>
+    <h1>Risearch</h1>
+<form enctype="multipart/form-data" action="/search" method="post">
+    <input type="file" name="uploadfile" />
+    <input type="hidden" name="token" value="{{.}}"/>
+    <input type="submit" value="Search" />
+</form>
+</body>
+</html>
