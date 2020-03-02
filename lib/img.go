@@ -51,7 +51,8 @@ func GetMatches(img_path string) []Match {
 			}
 		}
 		avg_dist /= K
-		matches = append(matches, Match{kp_path, avg_dist})
+		img_path := "data/img/" + f.Name()[:len(f.Name())-5]
+		matches = append(matches, Match{img_path, avg_dist})
 		i++
 	}
 
