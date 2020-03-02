@@ -10,7 +10,7 @@ import (
 	"sort"
 )
 
-type match struct {
+type Match struct {
 	Img     string  // Path to image being matched against
 	AvgDist float64 // Average Euclidean Distance between matches
 }
@@ -19,13 +19,13 @@ const MAX_IMAGES = 100
 const KP_DIR = "data/kp"
 const K = 4
 
-func GetMatches(img_path string) []match {
+func GetMatches(img_path string) []Match {
 	img_desc := GetDescriptors(img_path)
 
 	bf := gocv.NewBFMatcherWithParams(gocv.NormL1, false)
 	defer bf.Close()
 
-	var matches []match
+	var matches []Match
 
 	files, err := ioutil.ReadDir(KP_DIR)
 	if err != nil {
@@ -51,7 +51,7 @@ func GetMatches(img_path string) []match {
 			}
 		}
 		avg_dist /= K
-		matches = append(matches, match{kp_path, avg_dist})
+		matches = append(matches, Match{kp_path, avg_dist})
 		i++
 	}
 
