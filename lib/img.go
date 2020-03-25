@@ -2,6 +2,7 @@ package lib
 
 import (
 	"fmt"
+	"github.com/tazzaoui/risearch/config"
 	"gocv.io/x/gocv"
 	"gocv.io/x/gocv/contrib"
 	"io/ioutil"
@@ -15,10 +16,6 @@ type Match struct {
 	AvgDist float64 // Average Euclidean Distance between matches
 }
 
-const MAX_IMAGES = 100
-const KP_DIR = "data/kp"
-const K = 4
-
 func GetMatches(img_path string) []Match {
 	img_desc := GetDescriptors(img_path)
 
@@ -27,7 +24,7 @@ func GetMatches(img_path string) []Match {
 
 	var matches []Match
 
-	files, err := ioutil.ReadDir(KP_DIR)
+	files, err := ioutil.ReadDir(config.KP_DIR)
 	if err != nil {
 		fmt.Println("Keypoints should be in data/kp")
 		os.Exit(1)
@@ -35,14 +32,14 @@ func GetMatches(img_path string) []Match {
 
 	i := 0
 	for _, f := range files {
-		if MAX_IMAGES > 0 && i >= MAX_IMAGES {
+		if config.MAX_IMAGES > 0 && i >= config.MAX_IMAGES {
 			break
 		}
 
-		kp_path := path.Join(KP_DIR, f.Name())
+		kp_path := path.Join(config.KP_DIR, f.Name())
 		desc := gocv.IMRead(kp_path, gocv.IMReadUnchanged)
 
-		desc_matches := bf.KnnMatch(desc, img_desc, K)
+		desc_matches := bf.KnnMatch(desc, img_desc, config.K)
 
 		avg_dist := 0.0
 		for _, m := range desc_matches {
@@ -50,8 +47,8 @@ func GetMatches(img_path string) []Match {
 				avg_dist += j.Distance
 			}
 		}
-		avg_dist /= K
-		img_path := "data/img/" + f.Name()[:len(f.Name())-5]
+		avg_dist /= config.K
+		img_path := config.IMG_DIR + "/" + f.Name()[:len(f.Name())-5]
 		matches = append(matches, Match{img_path, avg_dist})
 		i++
 	}
