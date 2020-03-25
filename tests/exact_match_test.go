@@ -1,13 +1,15 @@
 package main
 
 import (
+	"github.com/tazzaoui/risearch/config"
 	"github.com/tazzaoui/risearch/lib"
+	"path"
 	"testing"
 )
 
 // Sanity check to make sure exact match is top result
 func TestExactMatch(t *testing.T) {
-	to_query := "../data/img/COCO_val2014_000000000073.jpg"
+	to_query := path.Join(config.ImgDir(), "COCO_val2014_000000000073.jpg")
 
 	top_match := lib.GetMatches(to_query)[0]
 
