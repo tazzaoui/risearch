@@ -1,14 +1,27 @@
 package config
 
-// Path to reference bank
-const IMG_DIR = "data/img"
+import (
+	"os"
+	"path"
+)
 
-// Output path of their extracted keypoints
-const KP_DIR = "data/kp"
+// Path to reference bank
+func ImgDir() string {
+	return path.Join(os.Getenv("GOPATH"), "src/github.com/tazzaoui/risearch/data/img")
+}
+
+// Path to their extracted keypoints
+func KpDir() string {
+	return path.Join(os.Getenv("GOPATH"), "src/github.com/tazzaoui/risearch/data/kp")
+}
 
 // Maximum number of images index
-const MAX_IMAGES = 100
+func MaxImages() int {
+	return 100
+}
 
 // Count of best matches found per each query descriptor. Used in knnMatch()
 // See: https://docs.opencv.org/master/db/d39/classcv_1_1DescriptorMatcher.html#aa880f9353cdf185ccf3013e08210483a
-const K = 4
+func K() int {
+	return 4
+}
