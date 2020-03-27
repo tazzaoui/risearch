@@ -53,7 +53,7 @@ func GetMatches(img_path string) []Match {
 			}
 		}
 
-		similarity := float64(len(valid_pts)) / float64(len(desc_matches)) * 100.0
+		similarity := float64(len(valid_pts)) / float64(len(desc_matches))
 
 		img_path := config.ImgDir() + "/" + f.Name()[:len(f.Name())-5]
 		matches = append(matches, Match{img_path, similarity})
