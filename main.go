@@ -16,6 +16,6 @@ func main() {
 
 	fmt.Println("After Sorting Top 10 matches...")
 	for _, m := range matches {
-		fmt.Println(m.Img, "\t", m.AvgDist)
+		fmt.Println(m.Img, "\t", m.Sim)
 	}
 }
