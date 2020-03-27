@@ -38,7 +38,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	template := template.Must(template.ParseFiles("templates/results.html"))
 
 	matches := lib.GetMatches(target_path)
-	fmt.Printf("[+] Matches: %d Closest Match: %.2f\n", len(matches), matches[0].AvgDist)
+	fmt.Printf("[+] Matches: %d Closest Match: %.2f\n", len(matches), matches[0].Sim)
 
 	err = template.ExecuteTemplate(w, "results.html", data{target_path, matches})
 	if err != nil {
