@@ -12,9 +12,12 @@ import (
 )
 
 type Match struct {
-	Img     string  // Path to image being matched against
-	AvgDist float64 // Average Euclidean Distance between matches
+	Img string  // Path to image being matched against
+	Sim float64 // Similarity metric
 }
+
+// Ratio used to filter keypts
+const RATIO = 0.7
 
 func GetMatches(img_path string) []Match {
 	img_desc := GetDescriptors(img_path)
@@ -41,20 +44,24 @@ func GetMatches(img_path string) []Match {
 
 		desc_matches := bf.KnnMatch(desc, img_desc, config.K())
 
-		avg_dist := 0.0
+		var valid_pts []gocv.DMatch
+
 		for _, m := range desc_matches {
-			for _, j := range m {
-				avg_dist += j.Distance
+			// My dude David Lowe's ratio test
+			if m[0].Distance < RATIO*m[1].Distance {
+				valid_pts = append(valid_pts, m[0])
 			}
 		}
-		avg_dist /= float64(config.K())
+
+		similarity := float64(len(valid_pts)) / float64(len(desc_matches)) * 100.0
+
 		img_path := config.ImgDir() + "/" + f.Name()[:len(f.Name())-5]
-		matches = append(matches, Match{img_path, avg_dist})
+		matches = append(matches, Match{img_path, similarity})
 		i++
 	}
 
 	sort.Slice(matches, func(i, j int) bool {
-		return matches[i].AvgDist < matches[j].AvgDist
+		return matches[i].Sim > matches[j].Sim
 	})
 
 	return matches
