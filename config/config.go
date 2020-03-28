@@ -15,7 +15,7 @@ func KpDir() string {
 	return path.Join(os.Getenv("GOPATH"), "src/github.com/tazzaoui/risearch/data/kp")
 }
 
-// Maximum number of images index
+// Maximum number of images index (-1 to index them all)
 func MaxImages() int {
 	return 100
 }
