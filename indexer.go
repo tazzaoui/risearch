@@ -19,10 +19,11 @@ func main() {
 	kp_dir := "data/kp"
 	var wg sync.WaitGroup
 
+	_ = os.Mkdir(kp_dir, 0700)
 	images, err := ioutil.ReadDir(image_dir)
 
 	if err != nil {
-		fmt.Println("Please download the image data set by running get_data.sh")
+		fmt.Println("Please download the image data set by running get_images.py")
 		os.Exit(1)
 	}
 
