@@ -45,9 +45,9 @@
     {{range .Matches}}
     <div class="gallery">
         <a target="_blank" href="{{.Img}}">
-            <img src="{{.Img}}">
+            <img src="../data/img/{{.Img}}">
         </a>
-        <div class="desc">{{.Img}} <br> Similarity: {{.Sim}}%</div>
+        <div class="desc">{{.Img}} <br> Similarity: {{.Sim}}</div>
     </div>
     {{end}}
 </body>

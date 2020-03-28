@@ -6,6 +6,7 @@ import (
 	"gocv.io/x/gocv"
 	"gocv.io/x/gocv/contrib"
 	"io/ioutil"
+	"math"
 	"os"
 	"path"
 	"sort"
@@ -55,8 +56,11 @@ func GetMatches(img_path string) []Match {
 
 		similarity := float64(len(valid_pts)) / float64(len(desc_matches))
 
-		img_path := config.ImgDir() + "/" + f.Name()[:len(f.Name())-5]
-		matches = append(matches, Match{img_path, similarity})
+		// Round similarity to two decimals
+		similarity = math.Floor(similarity*100) / 100
+
+		img_path := f.Name()[:len(f.Name())-5]
+		matches = append(matches, Match{img_path, math.Floor(similarity*100) / 100})
 		i++
 	}
 
