@@ -2,7 +2,7 @@
 
 Writing reverse image search to learn go
 
-![SIFT Keypoints](example.png)
+![SIFT Keypoints](screenshot.png)
 
 ## Deps
 * [gocv](https://gocv.io/)
