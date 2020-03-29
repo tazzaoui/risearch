@@ -17,7 +17,7 @@ func KpDir() string {
 
 // Maximum number of images index (-1 to index them all)
 func MaxImages() int {
-	return 100
+	return 505
 }
 
 // Count of best matches found per each query descriptor. Used in knnMatch()

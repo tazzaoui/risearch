@@ -40,7 +40,14 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	matches := lib.GetMatches(target_path)
 	fmt.Printf("[+] Matches: %d Closest Match: %.2f\n", len(matches), matches[0].Sim)
 
-	err = template.ExecuteTemplate(w, "results.html", data{target_path, matches})
+	var results []lib.Match
+	for _, m := range matches {
+		if m.Sim >= 0.05 {
+			results = append(results, m)
+		}
+	}
+
+	err = template.ExecuteTemplate(w, "results.html", data{target_path, results})
 	if err != nil {
 		fmt.Println(err)
 		return
